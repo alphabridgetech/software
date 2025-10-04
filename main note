@@ -1,0 +1,197 @@
+
+
+for python run 
+source venv/bin/activate
+
+folder permission 
+chown -R kunal:kunal telequill_deb
+
+sudo chown -R $USER:$USER librenms
+sudo chown -R 1000:1000 librenms
+sudo chmod -R 755 librenms
+
+
+uninstall
+sudo apt remove telequill_deb
+
+build pkg 
+dpkg-deb --build telequill_deb
+
+install pkg 
+sudo dpkg -i telequill_deb.deb
+sudo apt-get install -f   
+
+copy one folder path to other folder 
+cp -r /home/kunal/Downloads/telequill-docker /home/kunal/Desktop/telequill_deb
+
+delete file cmd 
+rm /home/kunal/Desktop/telequill_deb/filename.txt
+
+
+run continuously 
+sudo docker compose -f compose.yml up -d
+
+🔹 Case 2: You want the container’s existing /opt/librenms code copied into /home/kunal/librenms
+
+docker cp librenms:/opt/librenms /home/kunal/
+
+docker exicution cmd 
+docker exec -it librenms bash
+
+docker down
+docker compose down
+
+docker up cmd
+sudo docker compose -f compose.yml up -d
+
+laravel logs check cmd
+tail -f ./data/logs/librenms.log
+tail -f /opt/librenms/logs/librenms.log
+
+restart container
+docker restart librenms
+
+
+
+delete folder cmd
+rm -rf telequill-docker/
+
+
+
+
+If you also want to delete images, volumes, networks (full cleanup):
+
+⚠️ Careful: This will wipe everything from Docker on your system.
+
+
+sudo docker stop $(sudo docker ps -aq) 2>/dev/null
+sudo docker rm -f $(sudo docker ps -aq) 2>/dev/null
+sudo docker rmi -f $(sudo docker images -aq) 2>/dev/null
+sudo docker volume rm $(sudo docker volume ls -q) 2>/dev/null
+sudo docker network rm $(sudo docker network ls -q) 2>/dev/null
+sudo docker system prune -a --volumes -f
+
+
+
+
+
+
+Docker Copy Files (Host Access)
+
+You can copy files from container to host:
+
+docker cp librenms:/opt/librenms ./librenms
+
+
+Now you can edit locally in VS Code.
+
+After editing, copy back if needed:
+
+docker cp ./librenms librenms:/opt/librenms
+
+
+mkdir librenms-docker
+cd librenms-docker
+git clone https://github.com/librenms/docker.git
+cd docker/examples/compose
+docker compose up -d
+sudo docker compose -f compose.yml up -d
+docker exec -it librenms bash
+
+check log cmd
+docker logs -f librenms
+
+
+
+cmd composer 
+docker compose run --rm librenms composer install --no-dev --no-interaction --prefer-dist
+
+//16-09-2025
+git installation step 
+first run this cmd
+sudo docker build -t my-librenms .
+
+then run 
+sudo docker compose -f compose.yml up -d
+
+sudo docker compose -f compose.yml up -d --build
+
+
+
+go libre outh
+su - librenms
+./discovery.php -h 192.162.200.242 -d
+./discovery.php -h all -d
+./poller.php -h all -r -f -d
+
+
+
+
+fix date error cmd 
+
+docker exec -it librenms bash
+
+# 1️⃣ Install timezone data if missing
+apk add --no-cache tzdata
+
+# 2️⃣ Set the system timezone to Asia/Kolkata
+echo "Asia/Kolkata" > /etc/timezone
+ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
+
+# 3️⃣ Update PHP timezone
+sed -i 's|^;*date.timezone =.*|date.timezone = Asia/Kolkata|' /etc/php83/php.ini
+
+# 4️⃣ Restart PHP-FPM (if running inside container)
+rc-service php-fpm restart 2>/dev/null || true
+
+
+
+fix composer issue cmd
+
+# Update Alpine package index
+apk update
+
+# Install PHP CLI, curl, and unzip (required by Composer)
+apk add --no-cache php-cli php-phar php-json php-mbstring curl unzip bash
+
+# Download and install Composer globally
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar /usr/local/bin/composer
+
+# Verify
+composer --version
+
+
+
+fix user permission cmd
+# If setfacl exists
+setfacl -d -m g::rwx /data/rrd /data/logs /opt/librenms/bootstrap/cache /opt/librenms/storage
+
+# Make sure group and owner have read/write/execute
+chmod -R ug=rwX /data/rrd /data/logs /opt/librenms/bootstrap/cache /opt/librenms/storage
+
+
+dpkg-deb --build telequill-deb
+
+sudo apt remove telequill-nms
+
+after installtion assign permission 
+chown -R 1000:1000 /opt/librenms/librenms-ansible
+-inventory-plugin
+
+one cmd getting all 
+./discovery.php -h all -d && ./poller.php -h all -d -f && ./validate.php
+
+
+
+
+
+
+
+
+
+
+
+
+
+
