@@ -183,6 +183,9 @@ one cmd getting all
 ./discovery.php -h all -d && ./poller.php -h all -d -f && ./validate.php
 
 
+sudo chmod +x /usr/share/telequill-installer/install.sh
+
+
 
 
 
