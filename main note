@@ -186,6 +186,28 @@ one cmd getting all
 sudo chmod +x /usr/share/telequill-installer/install.sh
 
 
+librenms:/opt/librenms# git pull
+remote: Enumerating objects: 5, done.
+remote: Counting objects: 100% (5/5), done.
+remote: Compressing objects: 100% (1/1), done.
+remote: Total 3 (delta 2), reused 3 (delta 2), pack-reused 0 (from 0)
+Unpacking objects: 100% (3/3), 285 bytes | 23.00 KiB/s, done.
+From https://github.com/alphabridgetech/librenms
+   f46bbbe98..b6f817eaf  Dev        -> origin/Dev
+Updating 08765d38b..b6f817eaf
+error: Your local changes to the following files would be overwritten by merge:
+        .gitignore
+        config/services.php
+        includes/html/pages/chatbot.inc.php
+        librenms-ansible-inventory-plugin/hosts.yml
+        resources/views/layouts/menu.blade.php
+        resources/views/mibs/index.blade.php
+        routes/web.php
+Please commit your changes or stash them before you merge.
+Aborting
+
+
+
 
 
 
