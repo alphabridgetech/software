@@ -1,2 +1,5 @@
 assign permission 
 sudo chmod +x /usr/share/telequill-installer/install.sh
+
+
+"C:\Program Files (x86)\VMware\VMware Workstation\vmware-vdiskmanager.exe" -r "CentOS 7 64-bit.vmdk" -t 0 "centos-merged.vmdk"
