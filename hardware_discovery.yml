@@ -1,0 +1,204 @@
+---
+- name: Alphabridge Hardware Inventory Discovery (Extended Info)
+  hosts: alphabridge_devices
+  gather_facts: no
+  become: false
+  vars:
+    output_path: "/opt/librenms/librenms-ansible-inventory-plugin/tmp/device_info.yml"
+
+  tasks:
+    - name: Create Telnet discovery script
+      ansible.builtin.copy:
+        dest: "/opt/librenms/librenms-ansible-inventory-plugin/tmp/alphabridge_discovery.py"
+        mode: '0755'
+        content: |
+          import telnetlib
+          import re
+          import yaml
+          import time
+
+          HOST = "{{ ansible_host }}"
+          USER = "{{ ansible_user }}"
+          PASSWORD = "{{ ansible_password }}"
+
+          result = {
+              "manufacturer": "",
+              "model": "",
+              "serial_number": "",
+              "firmware_version": "",
+              "hardware_version": "",
+              "rom_version": "",
+              "pcb_version": "",
+              "memory": "",
+              "flash": "",
+              "base_mac": "",
+              "system_image": "",
+              "uptime": "",
+              "system_time": "",
+              "reboot_count": "",
+              "snmp_info": {},
+              "slug": "",
+              "part_number": "",
+              "interfaces": [],
+              "console_ports": [],
+              "virtual_ports": []
+          }
+
+          try:
+              tn = telnetlib.Telnet(HOST, timeout=10)
+
+              tn.read_until(b"Username:", timeout=5)
+              tn.write(USER.encode('ascii') + b"\n")
+
+              tn.read_until(b"Password:", timeout=5)
+              tn.write(PASSWORD.encode('ascii') + b"\n")
+
+              # Wait for CLI prompt (">" or "#")
+              index, _, _ = tn.expect([b">", b"#"], timeout=5)
+              if index == 0:
+                  tn.write(b"enable\n")
+                  tn.read_until(b"#", timeout=5)
+
+              tn.write(b"terminal length 0\n")
+              time.sleep(1)
+
+              # === GET VERSION INFO ===
+              tn.write(b"show version\n")
+              time.sleep(3)
+              version_output = tn.read_very_eager().decode('ascii', errors='ignore')
+
+              # Manufacturer
+              m = re.search(r'^(Alpha\s+Bridge[^\n]+)', version_output, re.MULTILINE)
+              if m:
+                  result["manufacturer"] = m.group(1).strip()
+
+              # Model
+              m = re.search(r'(AS\d+\w*(?:-\w+)*)', version_output)
+              if m:
+                  result["model"] = m.group(1)
+                  result["slug"] = m.group(1).lower()
+                  result["part_number"] = m.group(1)
+
+              # Firmware version
+              m = re.search(r'Version\s+([\d\.A-Za-z]+)', version_output)
+              if m:
+                  result["firmware_version"] = m.group(1).strip()
+
+              # Serial number
+              m = re.search(r'Serial\s*num:\s*([A-Za-z0-9\-]+)', version_output)
+              if m:
+                  result["serial_number"] = m.group(1).strip()
+
+              # Hardware version
+              m = re.search(r'hardware version:([A-Za-z0-9]+)', version_output)
+              if m:
+                  result["hardware_version"] = m.group(1).strip()
+
+              # ROM version
+              m = re.search(r'ROM:\s*System Bootstrap,\s*Version\s*([\d\.]+)', version_output)
+              if m:
+                  result["rom_version"] = m.group(1).strip()
+
+              # PCB version
+              m = re.search(r'PCB version:([A-Za-z0-9\s]+)', version_output)
+              if m:
+                  result["pcb_version"] = m.group(1).strip()
+
+              # Memory / Flash
+              m = re.search(r'(\d+K)\s*bytes of memory,(\d+K)\s*bytes of flash', version_output)
+              if m:
+                  result["memory"] = m.group(1)
+                  result["flash"] = m.group(2)
+
+              # Base MAC address
+              m = re.search(r'Base ethernet MAC Address:\s*([0-9a-f:]+)', version_output, re.IGNORECASE)
+              if m:
+                  result["base_mac"] = m.group(1)
+
+              # System image
+              m = re.search(r'System image file is\s+"([^"]+)"', version_output)
+              if m:
+                  result["system_image"] = m.group(1)
+
+              # SNMP info
+              snmp = re.search(r'snmp info:\s*vend_ID:(\d+)\s+product_ID:(\d+)\s+system_ID:([^\n]+)', version_output)
+              if snmp:
+                  result["snmp_info"] = {
+                      "vendor_id": snmp.group(1),
+                      "product_id": snmp.group(2),
+                      "system_id": snmp.group(3).strip()
+                  }
+
+              # Uptime
+              m = re.search(r'uptime is\s+([0-9:]+)', version_output)
+              if m:
+                  result["uptime"] = m.group(1)
+
+              # System time
+              m = re.search(r'The current time:\s*([0-9\-:\s]+)', version_output)
+              if m:
+                  result["system_time"] = m.group(1).strip()
+
+              # Reboot count
+              m = re.search(r'(\d+)\s+times of reboot', version_output)
+              if m:
+                  result["reboot_count"] = m.group(1)
+
+              # === INTERFACE INFO ===
+              tn.write(b"show interface brief\n")
+              time.sleep(3)
+              iface_output = tn.read_very_eager().decode('ascii', errors='ignore')
+              iface_output = re.sub(r'--More--', '', iface_output)
+
+              for line in iface_output.splitlines():
+                  match = re.match(r'^(g\d+/\d+|v\d+|n\d+)\s+.*?(Giga-[A-Z]+|Fast-[A-Z]+|TenGiga-[A-Z]+|up|down)', line)
+                  if match:
+                      name, iface_type = match.groups()
+                      result["interfaces"].append({
+                          "name": name,
+                          "type": iface_type
+                      })
+
+              # === CONSOLE AND VTY ===
+              tn.write(b"show line\n")
+              time.sleep(2)
+              line_output = tn.read_very_eager().decode('ascii', errors='ignore')
+              line_output = re.sub(r'--More--', '', line_output)
+
+              for line in line_output.splitlines():
+                  line = line.strip()
+                  match = re.match(r'^\*?\s*(\d+)\s+(CTY|VTY)\s+', line)
+                  if match:
+                      no, line_type = match.groups()
+                      entry = {"name": f"line{no}", "type": line_type}
+                      if line_type == "CTY":
+                          result["console_ports"].append(entry)
+                      elif line_type == "VTY":
+                          result["virtual_ports"].append(entry)
+
+              tn.write(b"exit\n")
+              tn.close()
+
+              # Save YAML output
+              with open("{{ output_path }}", "w") as f:
+                  yaml.dump(result, f, sort_keys=False)
+
+          except Exception as e:
+              with open("{{ output_path }}", "w") as f:
+                  f.write("Error: " + str(e))
+
+    - name: Execute discovery script
+      ansible.builtin.command:
+        cmd: python3 /opt/librenms/librenms-ansible-inventory-plugin/tmp/alphabridge_discovery.py
+      register: run_output
+      changed_when: false
+
+    - name: Show discovery result
+      ansible.builtin.command:
+        cmd: cat {{ output_path }}
+      register: device_info
+      changed_when: false
+
+    - name: Display structured YAML output
+      ansible.builtin.debug:
+        msg: "{{ device_info.stdout_lines }}"
