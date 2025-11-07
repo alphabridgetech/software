@@ -1,0 +1,139 @@
+manufacturer: Alpha Bridge Technologies Private Limited Internetwork Operating System
+  Software
+model: AS228XF_switch_1
+serial_number: '20073032831'
+firmware_version: 2.2.0F
+hardware_version: A
+rom_version: 0.1.5
+pcb_version: C
+memory: 262144K
+flash: 16384K
+base_mac: c8:6b:bc:a0:c6:33
+system_image: Switch.bin
+uptime: '8:02:08:40'
+system_time: '2000-1-9 2:15:25'
+reboot_count: '7'
+snmp_info:
+  vendor_id: '58158'
+  product_id: '458'
+  system_id: 1.3.6.1.4.1.58158.1.458.0
+slug: as228xf_switch_1
+comment: '+--------------------------------------------------------------------+
+
+  |                              WARNING                               |
+
+  |                              -------                               |
+
+  | This system is solely for the use of authorized users of           |
+
+  | Oil India Limited for official purposes.                           |
+
+  |                                                                    |
+
+  | You have no expectation of privacy in its use and to ensure that   |
+
+  | the system is functioning properly, individuals using this         |
+
+  | this computer system are subject to having all of their activities |
+
+  | monitored and recorded by system personnel. Use of this system     |
+
+  | evidences an express consent to such monitoring and agreement that |
+
+  | if such monitoring reveals evidence of possible abuse or criminal  |
+
+  | activity, system personnel may provide the results of such         |
+
+  | monitoring to appropriate officials.                               |
+
+  |                                                                    |
+
+  |--------------------------------------------------------------------|
+
+  |            Access is restricted to authorized users only.          |
+
+  | Unauthorized access is a violation of state and federal, civil and |
+
+  |                            criminal laws.                          |
+
+  +--------------------------------------------------------------------+'
+interfaces:
+- name: g0/1
+  type: down
+- name: g0/2
+  type: down
+- name: g0/3
+  type: down
+- name: g0/4
+  type: up
+- name: g0/5
+  type: down
+- name: g0/6
+  type: down
+- name: g0/7
+  type: down
+- name: g0/8
+  type: up
+- name: g0/9
+  type: down
+- name: g0/10
+  type: down
+- name: g0/11
+  type: down
+- name: g0/12
+  type: down
+- name: g0/13
+  type: down
+- name: g0/14
+  type: down
+- name: g0/15
+  type: down
+- name: g0/16
+  type: down
+- name: g0/17
+  type: down
+- name: g0/18
+  type: down
+- name: g0/19
+  type: down
+- name: g0/20
+  type: down
+- name: g0/21
+  type: down
+- name: g0/22
+  type: down
+- name: g0/23
+  type: down
+- name: g0/24
+  type: down
+- name: v1
+  type: up
+- name: v10
+  type: up
+- name: v780
+  type: up
+- name: n0
+  type: up
+console_ports:
+- name: line0
+  type: CTY
+virtual_ports:
+- name: line0
+  type: VTY
+- name: line1
+  type: VTY
+- name: line2
+  type: VTY
+- name: line3
+  type: VTY
+- name: line4
+  type: VTY
+power_status:
+- chassis_number: '1'
+  power_number: '1'
+  status: 'on'
+  presence: 'yes'
+- chassis_number: '1'
+  power_number: '2'
+  status: down
+  presence: 'yes'
