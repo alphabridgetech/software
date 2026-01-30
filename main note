@@ -1,4 +1,4 @@
-AIzaSyBI8LgWDpvKsogtG0A1o-J-wcQl4oUQdKI
+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
 
 for python run 
 source venv/bin/activate
@@ -183,30 +183,89 @@ one cmd getting all
 ./discovery.php -h all -d && ./poller.php -h all -d -f && ./validate.php
 
 
+for permission 
 sudo chmod +x /usr/share/telequill-installer/install.sh
 
 
-librenms:/opt/librenms# git pull
-remote: Enumerating objects: 5, done.
-remote: Counting objects: 100% (5/5), done.
-remote: Compressing objects: 100% (1/1), done.
-remote: Total 3 (delta 2), reused 3 (delta 2), pack-reused 0 (from 0)
-Unpacking objects: 100% (3/3), 285 bytes | 23.00 KiB/s, done.
-From https://github.com/alphabridgetech/librenms
-   f46bbbe98..b6f817eaf  Dev        -> origin/Dev
-Updating 08765d38b..b6f817eaf
-error: Your local changes to the following files would be overwritten by merge:
-        .gitignore
-        config/services.php
-        includes/html/pages/chatbot.inc.php
-        librenms-ansible-inventory-plugin/hosts.yml
-        resources/views/layouts/menu.blade.php
-        resources/views/mibs/index.blade.php
-        routes/web.php
-Please commit your changes or stash them before you merge.
-Aborting
+
+for run ansible ssh with 
+source /opt/librenms/ansible-venv/bin/activate
+
+python3 -m venv /opt/librenms
+. /opt/librenms/bin/activate
+
+python3 -m venv /opt/librenms/librenms-ansible-inventory-plugin
+. /opt/librenmslibrenms-ansible-inventory-plugin//bin/activate
+
+paramiko install in librenms
 
 
+i want to add tftp server
+apk add tftp-hpa
+
+copy docker to local 
+docker cp librenms:/opt/librenms /home/kunal/
+
+changes imp
+1.add this in docker file  
+  apk add php-yaml
+  
+2.librenms-ansible-inventory-plugin
+python3 -m venv /opt/librenms/librenms-ansible-inventory-plugin
+pip3 install paramiko
+
+3.then restart librenms
+docker restart librenms
+
+
+port check cmd 
+sudo lsof -i :1883
+
+
+for getting data 
+docker exec -it librenms-mosquitto mosquitto_sub -t "periodic/switch/#" -v
+
+
+
+for install tftp server in ubantu 
+
+sudo apt update && sudo apt upgrade -y
+sudo apt install tftpd-hpa tftp -y
+
+sudo nano /etc/default/tftpd-hpa
+TFTP_USERNAME="tftp"
+TFTP_DIRECTORY="/var/lib/tftpboot"
+TFTP_ADDRESS="0.0.0.0:69"
+TFTP_OPTIONS="--secure --create"
+
+sudo mkdir -p /var/lib/tftpboot
+sudo chown -R tftp:tftp /var/lib/tftpboot
+sudo chmod -R 775 /var/lib/tftpboot
+
+most imp permission
+sudo chown -R tftp:1000 /var/lib/tftpboot
+sudo chmod -R 775 /var/lib/tftpboot
+
+
+sudo systemctl restart tftpd-hpa
+sudo systemctl enable tftpd-hpa
+
+
+sudo systemctl status tftpd-hpa
+
+
+check ansible using cmd
+
+ansible-playbook -i hosts/192.168.200.245.yml playbooks/tftpexport.yml -e "tftp_server=192.168.200.73" -e "filename=switch.bin" -e "destination_file=switch.bin"
+
+
+
+openrouter
+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
+
+
+
+	
 
 
 
