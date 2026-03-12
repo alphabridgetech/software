@@ -208,7 +208,7 @@ docker cp librenms:/opt/librenms /home/kunal/
 
 changes imp
 1.add this in docker file  
-  apk add php-yaml
+apk add php-yaml
   
 2.librenms-ansible-inventory-plugin
 python3 -m venv /opt/librenms/librenms-ansible-inventory-plugin
@@ -262,6 +262,23 @@ ansible-playbook -i hosts/192.168.200.245.yml playbooks/tftpexport.yml -e "tftp_
 
 openrouter
 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
+
+
+for librenms logs 
+add 121 line 
+
+
+        $output .= (new Carbon($eventlog->datetime))->setTimezone(session('preferences.timezone')?? config('app.timezone'))->format(LibrenmsConfig::get('dateformat.compact'));
+
+
+
+
+for install opencode in docke r
+apk update
+apk add nodejs npm
+npm install -g opencode-ai
+opencode
+
 
 
 
