@@ -212,6 +212,7 @@ apk add php-yaml
   
 2.librenms-ansible-inventory-plugin
 python3 -m venv /opt/librenms/librenms-ansible-inventory-plugin
+source bin/activate
 pip3 install paramiko
 
 3.then restart librenms
