@@ -1,0 +1,38 @@
+config_json:
+  hostname: "bridge1"
+  interfaces:
+    - name: "GigabitEthernet0/9"
+      description: "Nokia_Router"
+      spanning_tree: false
+      mode: "dot1q-tunnel-uplink"
+      allowed_vlans: "2001-3000,4000"
+      pvid: null
+      qinq_rules: []
+    - name: "GigabitEthernet0/10"
+      description: "Tester"
+      spanning_tree: false
+      mode: "trunk"
+      allowed_vlans: "2225"
+      pvid: 2225
+      qinq_rules: []
+    - name: "GigabitEthernet0/11"
+      description: "QinQ_customer"
+      spanning_tree: false
+      mode: "dot1q-translating-tunnel"
+      allowed_vlans: "100-200"
+      pvid: 100
+      qinq_rules:
+        - from: 100
+          to: 1
+          cos: 0
+        - from: 200
+          to: 2
+          cos: 1
+    - name: "GigabitEthernet0/12"
+      description: "LACP_Uplink"
+      spanning_tree: true
+      mode: "trunk"
+      allowed_vlans: "100,200,300"
+      pvid: null
+      lacp: true
+      qinq_rules: []
