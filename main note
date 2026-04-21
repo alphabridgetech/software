@@ -282,7 +282,51 @@ opencode
 
 
 
+Correct Way to Do This (without breaking container)
+✔️ Step 1: First copy real data from container
 
+Remove mount temporarily and start once:
+
+docker-compose down
+
+👉 Comment/remove this line:
+
+# - "./telequill:/opt/librenms"
+
+Start:
+
+docker-compose up -d
+✔️ Step 2: Copy container → host
+docker cp librenms:/opt/librenms ./telequill
+
+Now your ./telequill has full LibreNMS code:
+
+.env
+cache/
+rrd/
+all files ✅
+✔️ Step 3: Stop container
+docker-compose down
+✔️ Step 4: Enable mount again
+volumes:
+  - "./telequill:/opt/librenms"
+  - "/var/lib/tftpboot:/tftpboot"
+✔️ Step 5: Fix permissions (VERY IMPORTANT)
+chown -R 1000:1000 ./telequill
+
+(or match your PUID/PGID)
+
+✔️ Step 6: Start again
+docker-compose up -d
+🎯 Now what happens
+
+✅ If you edit file in:
+
+./telequill
+
+👉 It will instantly reflect inside container:
+
+/opt/librenms
 	
 
 
