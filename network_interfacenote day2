@@ -1,0 +1,6 @@
+Route::get('addhost/ip', [SystemBulkUploadController::class, 'addHostIp'])->name('addhost.ip');
+    Route::post('addhost/ip/save', [SystemBulkUploadController::class, 'addHostIpsave'])->name('addhost.ip.save');
+
+    add menu.blade.php
+    <li><a href="{{ route('addhost.ip') }}"><i class="fa fa-plus fa-fw fa-lg "
+                                                              aria-hidden="true"></i> {{ __('Add Device Using IP') }}</a></li>
