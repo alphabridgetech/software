@@ -1,0 +1,108 @@
+---
+- name: Run Dynamic Config on AlphaBridge via Telnet
+  hosts: alphabridge_devices
+  gather_facts: no
+
+  vars:
+    script_path: "/opt/librenms/librenms-ansible-inventory-plugin/tmp/telnet_config.py"
+    output_file: "/opt/librenms/librenms-ansible-inventory-plugin/tmp/telnet_output.txt"
+
+  tasks:
+
+    - name: Ensure tmp directory exists
+      file:
+        path: /opt/librenms/librenms-ansible-inventory-plugin/tmp
+        state: directory
+        mode: '0755'
+      delegate_to: localhost
+
+    - name: Create Telnet config script
+      copy:
+        dest: "{{ script_path }}"
+        mode: '0755'
+        content: |
+          import telnetlib
+          import time
+          import json
+
+          HOST = "{{ ansible_host }}"
+          USER = "{{ ansible_user }}"
+          PASSWORD = "{{ ansible_password }}"
+
+          raw_commands = json.loads({{ cli_commands | to_json }})
+          if isinstance(raw_commands, list):
+              COMMANDS = raw_commands
+          else:
+              COMMANDS = [line.strip() for line in raw_commands.strip().split('\n') if line.strip()]
+
+          OUTPUT_FILE = "{{ output_file }}"
+
+          def read(tn, delay=1):
+              time.sleep(delay)
+              return tn.read_very_eager().decode(errors="ignore")
+
+          try:
+              tn = telnetlib.Telnet(HOST, timeout=10)
+
+              tn.read_until(b"Username:")
+              tn.write(USER.encode('ascii') + b"\n")
+
+              tn.read_until(b"Password:")
+              tn.write(PASSWORD.encode('ascii') + b"\n")
+
+              time.sleep(2)
+              output = read(tn)
+
+              # ENABLE MODE
+              tn.write(b"enable\n")
+              time.sleep(2)
+              output += read(tn)
+
+              # ENTER CONFIG MODE
+              tn.write(b"config\n")
+              time.sleep(2)
+              output += read(tn)
+
+              # RUN COMMANDS
+              for cmd in COMMANDS:
+                  tn.write(cmd.encode('ascii') + b"\n")
+                  time.sleep(2)
+                  output += read(tn)
+
+              # SAVE CONFIG
+              tn.write(b"end\n")
+              time.sleep(1)
+              tn.write(b"write all\n")
+              time.sleep(3)
+              output += read(tn)
+
+              tn.write(b"exit\n")
+              tn.close()
+
+              with open(OUTPUT_FILE, "w") as f:
+                  f.write(output)
+
+          except Exception as e:
+              with open(OUTPUT_FILE, "w") as f:
+                  f.write("ERROR: " + str(e))
+
+      delegate_to: localhost
+
+    - name: Execute Telnet script
+      command: python3 {{ script_path }}
+      register: result
+      changed_when: false
+      failed_when: false
+      delegate_to: localhost
+
+    - name: Fetch output file
+      fetch:
+        src: "{{ output_file }}"
+        dest: "./telnet_output_{{ inventory_hostname }}.txt"
+        flat: yes
+      delegate_to: localhost
+
+    - name: Show execution result
+      debug:
+        var: result.stdout
+      delegate_to: localhost
