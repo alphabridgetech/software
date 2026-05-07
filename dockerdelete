@@ -1,0 +1,23 @@
+Stop Docker
+sudo systemctl stop dockersudo systemctl stop containerd
+Remove Docker packages
+sudo apt-get purge -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
+If installed from Ubuntu repo:
+sudo apt-get purge -y docker.io docker-doc docker-compose podman-docker
+
+Remove Docker data (IMPORTANT: deletes containers/images/volumes)
+sudo rm -rf /var/lib/dockersudo rm -rf /var/lib/containerd
+
+Remove Docker config files
+sudo rm -rf /etc/dockersudo rm -rf ~/.docker
+
+Remove Docker group
+sudo groupdel docker
+
+Cleanup unused packages
+sudo apt autoremove -ysudo apt autoclean
+
+Verify Docker removed
+docker --version
+
+  docker info | grep "Docker Root Dir"
