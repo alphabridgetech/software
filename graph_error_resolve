@@ -1,0 +1,37 @@
+First check container name:
+
+docker ps
+
+Then run:
+
+docker exec -it <container_name> bash
+
+Inside container:
+
+chown -R librenms:librenms /opt/librenms
+chmod -R ug=rwX /opt/librenms
+
+Check validation:
+
+su - librenms
+./validate.php
+
+Or directly from host:
+
+docker exec -it <container_name> su -s /bin/bash librenms -c "./validate.php"
+
+If RRD ownership issue still exists:
+
+chown -R librenms:librenms /opt/librenms/rrd
+chown -R librenms:librenms /opt/librenms/logs
+
+Then restart container:
+
+docker restart <container_name>
+
+If using docker-compose:
+
+docker compose restart
+
+You can also identify wrong ownership files with:
+find /opt/librenms ! -user librenms
