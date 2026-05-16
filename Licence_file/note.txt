@@ -6,3 +6,17 @@
 3.error->license.blade.php
 
 4.dashboard.blade.php
+
+
+Route::get('/dashboard', function () {
+        $verifier = new LicenseVerifier();
+        $result = $verifier->verify();
+        $license = $result['license'];
+        return view('dashboard', [
+            'product' => $license['product'] ?? 'Unknown',
+            'expiry' => $license['expiry'] ?? 'N/A',
+            'maxUsers' => $license['max_users'] ?? 'Unlimited',
+            'domain' => $license['domain'] ?? 'N/A',
+            'licenseKey' => $license['license_key'] ?? 'N/A',
+        ]);
+    });
