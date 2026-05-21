@@ -1,0 +1,115 @@
+statup cmd
+
+docker cp /home/kunal/Downloads/ixed.8.3.lin librenms:/usr/lib/php83/modules
+
+apk add --no-cache eudev-libs
+
+
+
+create superadmin cmd
+php artisan user:add kunal \
+  -p '12345678' \
+  -e kunal@example.com \
+  -l 'Kunal Verma' \
+  -r admin
+
+1.for install tftp server in ubantu 
+
+sudo apt update && sudo apt upgrade -y
+sudo apt install tftpd-hpa tftp -y
+
+sudo nano /etc/default/tftpd-hpa
+TFTP_USERNAME="tftp"
+TFTP_DIRECTORY="/var/lib/tftpboot"
+TFTP_ADDRESS="0.0.0.0:69"
+TFTP_OPTIONS="--secure --create"
+
+sudo mkdir -p /var/lib/tftpboot
+sudo chown -R tftp:tftp /var/lib/tftpboot
+sudo chmod -R 775 /var/lib/tftpboot
+
+most imp permission
+sudo chown -R tftp:1000 /var/lib/tftpboot
+sudo chmod -R 775 /var/lib/tftpboot
+
+
+sudo systemctl restart tftpd-hpa
+sudo systemctl enable tftpd-hpa
+
+
+sudo systemctl status tftpd-hpa
+
+
+
+
+
+2.python pkg
+
+1.add this in docker file  
+apk add php-yaml
+  
+2.librenms-ansible-inventory-plugin
+python3 -m venv /opt/librenms/librenms-ansible-inventory-plugin
+source bin/activate
+pip3 install paramiko
+
+3.then restart librenms
+docker restart librenms
+
+
+3.ntp installation
+
+Install Chrony
+sudo apt install chrony -y
+3. Enable and Start Chrony
+sudo systemctl enable chrony
+sudo systemctl start chrony
+4. Check Chrony Status
+sudo systemctl status chrony
+
+You should see:
+
+active (running)
+
+Press:
+
+q
+
+to exit status screen.
+
+5. Verify Time Synchronization
+chronyc tracking
+
+and
+
+chronyc sources -v
+6. Check Current Time
+timedatectl
+
+Expected:
+
+System clock synchronized: yes
+NTP service: active
+7. Configure Timezone (Optional)
+
+List timezones:
+
+timedatectl list-timezones
+
+Set India timezone:
+
+sudo timedatectl set-timezone Asia/Kolkata
+
+Verify:
+
+timedatectl
+8. Open Firewall for NTP (If Server)
+
+If Ubuntu firewall is enabled:
+
+sudo ufw allow 123/udp
+
+Reload:
+
+sudo ufw reload
+
