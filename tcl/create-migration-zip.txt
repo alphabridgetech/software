@@ -1,0 +1,56 @@
+How to create telequill-migrate.zip
+====================================
+
+This document describes how to generate the offline migration zip file
+from a running Telequill Docker setup.
+
+Prerequisites
+-------------
+- Docker and Docker Compose installed
+- All containers running (librenms, db, redis, msmtpd)
+- The Telequill_Install directory at /opt/Telequill_Install
+
+Step 1: Save Docker images to a tarball
+----------------------------------------
+docker save my-librenms:latest mariadb:10 redis:7.2-alpine crazymax/msmtpd:latest \
+  -o /tmp/images.tar
+
+Step 2: Prepare the data directories
+-------------------------------------
+Stop the services to ensure data consistency:
+  cd /opt/Telequill_Install/examples/compose
+  docker compose down
+
+The compose directory already contains these data directories:
+  ./librenms/  → persistent LibreNMS data (config, logs, RRD, plugins, etc.)
+  ./db/        → MariaDB database files (ibdata, ib_logfile, etc.)
+
+Step 3: Assemble the zip
+-------------------------
+mkdir -p /tmp/telequill-migrate
+
+cp /tmp/images.tar /tmp/telequill-migrate/
+
+cp -r /opt/Telequill_Install/examples/compose/librenms \
+  /tmp/telequill-migrate/librenms-data
+
+cp -r /opt/Telequill_Install/examples/compose/db \
+  /tmp/telequill-migrate/db-data
+
+cp -r /opt/Telequill_Install \
+  /tmp/telequill-migrate/Telequill_Install
+
+cd /tmp
+zip -r /root/Desktop/telequill-migrate.zip telequill-migrate/
+
+Step 4: Result
+---------------
+/root/Desktop/telequill-migrate.zip
+├── images.tar               ← 4 Docker images (my-librenms, mariadb, redis, msmtpd)
+├── librenms-data/           ← Existing LibreNMS config, logs, RRD data, etc.
+├── db-data/                 ← Existing MariaDB database
+└── Telequill_Install/       ← Compose files, Dockerfile, rootfs, etc.
+
+Restore on target system
+-------------------------
+See the "Offline migration process" in the corresponding restore guide.
