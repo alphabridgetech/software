@@ -1,0 +1,41 @@
+Zip ready: /root/Desktop/telequill-migrate.zip (806 MB)
+
+Contents inside the zip:
+
+telequill-migrate.zip
+├── images.tar          (4 Docker images — my-librenms, mariadb, redis, msmtpd)
+├── librenms-data/      (existing LibreNMS config, logs, RRD data, etc.)
+├── db-data/            (existing MariaDB database)
+└── Telequill_Install/  (compose files, Dockerfile, rootfs, etc.)
+
+Offline migration process for the target system:
+
+Step 1: Copy and extract the zip
+
+Copy the zip file to the target system using LAN or USB, then extract it:
+
+unzip /path/to/telequill-migrate.zip -d /opt/
+Step 2: Load Docker images
+docker load -i /opt/telequill-migrate/images.tar
+
+Verify the images:
+
+docker images | grep -E '(my-librenms|mariadb|redis|msmtpd)'
+Step 3: Restore existing data
+rm -rf /opt/telequill-migrate/Telequill_Install/examples/compose/librenms
+rm -rf /opt/telequill-migrate/Telequill_Install/examples/compose/db
+
+cp -r /opt/telequill-migrate/librenms-data \
+  /opt/telequill-migrate/Telequill_Install/examples/compose/librenms
+
+cp -r /opt/telequill-migrate/db-data \
+  /opt/telequill-migrate/Telequill_Install/examples/compose/db
+Step 4: Start Docker Compose
+cd /opt/telequill-migrate/Telequill_Install/examples/compose
+docker compose up -d
+Step 5: Verify containers
+docker compose ps
+
+Open in browser:
+
+http://<target-ip>:8000
