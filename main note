@@ -333,6 +333,13 @@ Command Options:
    * To local storage: php artisan db:backup-manual --destination=local
    * To external drive: php artisan db:backup-manual --destination=external
    * To network drive: php artisan db:backup-manual --destination=network
+
+
+restore bkp
+php artisan db:backup-import {path}
+
+docker cp /path/to/your/backup.sql <container_name_or_id>:/opt/librenms/storage/app/backups/
+  (Replace <container_name_or_id> with your actual container name)
 	
 
 
