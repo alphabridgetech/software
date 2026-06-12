@@ -327,6 +327,12 @@ docker-compose up -d
 👉 It will instantly reflect inside container:
 
 /opt/librenms
+
+
+Command Options:
+   * To local storage: php artisan db:backup-manual --destination=local
+   * To external drive: php artisan db:backup-manual --destination=external
+   * To network drive: php artisan db:backup-manual --destination=network
 	
 
 
