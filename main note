@@ -345,7 +345,6 @@ docker cp /path/to/your/backup.sql <container_name_or_id>:/opt/librenms/storage/
 
 
 Create Patch 
-
 copy file
 docker cp telequill:/opt/librenms /root
 
