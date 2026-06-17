@@ -346,11 +346,20 @@ docker cp /path/to/your/backup.sql <container_name_or_id>:/opt/librenms/storage/
 
 Create Patch 
 
+copy file
 docker cp telequill:/opt/librenms /root
 
-tar -czvf librenms.tar.gz librenms
+create tar file 
+tar -czvf telequill_v21.tar.gz librenms
 
-scp /root/librenms.tar.gz root@10.10.10.20:/root/
+send file using ip
+scp /root/telequill_v21.tar.gz root@10.10.10.20:/root/
+
+copy host to container
+docker cp /root/telequill_v21.tar.gz telequill:/opt/librenms/
+
+unzip in container
+tar -xzvf /tmp/telequill_v21.tar.gz
 	
 
 
