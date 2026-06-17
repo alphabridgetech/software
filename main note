@@ -349,6 +349,8 @@ Create Patch
 docker cp telequill:/opt/librenms /root
 
 tar -czvf librenms.tar.gz librenms
+
+scp /root/librenms.tar.gz root@10.10.10.20:/root/
 	
 
 
