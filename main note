@@ -364,6 +364,9 @@ tar -xzvf /tmp/telequill_v21.tar.gz
 librenms syslogs change
 config.php
 $config['enable_syslog'] = 1;
+
+switch enable syslog
+logging 192.168.200.179
 	
 
 
