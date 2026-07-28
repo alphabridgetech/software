@@ -367,6 +367,9 @@ $config['enable_syslog'] = 1;
 
 switch enable syslog
 logging 192.168.200.179
+
+
+apk add eudev-libs
 	
 
 
