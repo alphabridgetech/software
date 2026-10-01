@@ -379,6 +379,16 @@ for download using tftp
 
 copy startup-config tftp: 192.168.0.10
 
+create file in tftp outside docker
+sudo mkdir -p /var/lib/tftpboot/node /var/lib/tftpboot/alarms
+sudo chown -R 1000:1000 /var/lib/tftpboot/node /var/lib/tftpboot/alarms
+
+create file in tftp inside docker
+docker exec telequill mkdir -p /tftpboot/node /tftpboot/alarms
+docker exec telequill chown librenms:librenms /tftpboot/node /tftpboot/alarms
+
+
+
 
 
 
