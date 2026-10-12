@@ -389,6 +389,8 @@ docker exec telequill chown librenms:librenms /tftpboot/node /tftpboot/alarms
 
 
 
+route -n
+ifmetric wlp2s0 0
 
 
 
