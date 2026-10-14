@@ -1,0 +1,36 @@
+Install NTP service
+
+Update packages
+sudo apt update
+
+
+2. Install NTP service (Chrony recommended)
+Ubuntu recommends Chrony for time synchronization.
+sudo apt install chrony -y
+
+
+3. Enable and start the service
+sudo systemctl enable --now chrony
+
+
+4. Check service status
+sudo systemctl status chrony
+
+
+5. Check time synchronization
+timedatectl
+
+6.sudo nano /etc/chrony/chrony.conf
+
+add
+
+pool ntp.ubuntu.com        iburst maxsources 4
+pool 0.ubuntu.pool.ntp.org iburst maxsources 1
+pool 1.ubuntu.pool.ntp.org iburst maxsources 1
+pool 2.ubuntu.pool.ntp.org iburst maxsources 2
+pool 2.ubuntu.pool.ntp.org iburst
+server time.google.com iburst
+#server 10.10.10.3
+#allow 10.10.10.0/24
+allow 0.0.0.0/0
+
