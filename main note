@@ -392,6 +392,12 @@ docker exec telequill chown librenms:librenms /tftpboot/node /tftpboot/alarms
 route -n
 ifmetric wlp2s0 0
 
+docker exec telequill sh -c '
+curl -fsSL -o /usr/lib/php83/modules/ixed.8.3.lin \
+  "https://www.sourceguardian.com/loaders/download.php?php_v=$(php -r "echo PHP_VERSION;")&php_ts=0&php_is=8&os_s=Linux&os_r=$(uname -r)&os_m=$(uname -m)"
+echo "extension=ixed.8.3.lin" > /etc/php83/conf.d/zz-ixed.ini
+kill -USR2 $(cat /run/php-fpm/*.pid)'
+
 
 
 
