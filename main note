@@ -399,6 +399,9 @@ echo "extension=ixed.8.3.lin" > /etc/php83/conf.d/zz-ixed.ini
 kill -USR2 $(cat /run/php-fpm/*.pid)'
 
 
+without admin
+docker exec -it -u librenms librenms bash
+
 
 
 
