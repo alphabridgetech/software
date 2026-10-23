@@ -403,6 +403,9 @@ without admin
 docker exec -it -u librenms librenms bash
 
 
+crond: USER librenms pid 4175 cmd php /opt/librenms/artisan schedule:run --no-ansi --no-interaction > /dev/null 2>&1
+2026/10/23 11:52:47 [error] 1255#1255: *8 FastCGI sent in stderr: "PHP message: PHP Error(256): SourceGuardian Loader - This protected script was not encoded for version 8.4.27 of PHP. Please re-encode or contact the author of the script regarding this problem. Error code [07] in /opt/librenms/app/Services/LicenseVerifier.php:2; PHP message: PHP Fatal error:  SourceGuardian Loader - This protected script was not encoded for version 8.4.27 of PHP. Please re-encode or contact the author of the script regarding this problem. Error code [07] in /opt/librenms/app/Services/LicenseVerifier.php on line 2" while reading response header from upstream, client: 172.18.0.1, server: , request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/var/run/php-fpm/php-fpm.sock:", host: "localhost:8000"
+
 
 
 
